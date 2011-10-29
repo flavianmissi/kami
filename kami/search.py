@@ -20,18 +20,18 @@ class Kami(object):
         ``prepend_operator`` The operator that prepends each statement, in case of ``exclude``, it's NOT by default.
         ``params`` field=value params
         """
-        _query = []
+        query = []
 
         for key, value in params.items():
-            _query.append('%s: "%s"' % (key, value))
+            query.append('%s: "%s"' % (key, value))
 
         if prepend_operator:
-            _query = ["%s %s" % (prepend_operator, query_statement) for query_statement in _query]
+            query = ["%s %s" % (prepend_operator, query_statement) for query_statement in query]
 
-        _query = (" %s " % logical_operator).join(_query)
+        query = (" %s " % logical_operator).join(query)
         if self.raw_query:
-            self.raw_query = "%s AND %s" % (self.raw_query, _query)
+            self.raw_query = "%s AND %s" % (self.raw_query, query)
         else:
-            self.raw_query = _query
+            self.raw_query = query
 
         return self.raw_query

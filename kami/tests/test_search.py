@@ -43,5 +43,9 @@ class ExcludeAndSimpleSearchMustWorkTogetherTestCase(TestCase):
         self.kami = Kami()
 
     def test_should_search_for_field_title_and_negate_the_album(self):
-        query = str(self.kami.search(title='Mein').exclude(album='Mutter').raw_query)
+        query = self.kami.search(title='Mein').exclude(album='Mutter').raw_query
         self.assertEqual('title: "Mein" AND NOT album: "Mutter"', query)
+
+    def test_glue_between_search_and_exclude_methods_should_be_AND_by_default(self):
+        query = self.kami.search(title='Mein').exclude(album='Mutter').raw_query
+        self.assertNotIn('OR', query)
