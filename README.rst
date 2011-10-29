@@ -9,5 +9,5 @@ Use the make target `test` to run all tests. e.g.:
     $ make test
 
 .. note::
-    The test discovery use built-in unittest2 auto discover, thus, to be able to use it, you must be running python 2.7
+    The test discovery uses built-in unittest2 auto discover, thus, to be able to use it, you must be running python 2.7
 
