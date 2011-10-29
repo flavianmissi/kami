@@ -1,22 +1,37 @@
 class Kami(object):
 
+    def __init__(self):
+        self.raw_query = ''
+
     def search(self, **params):
-        return self._mount_query(**params)
+        """ Simple key value search query """
+        self._filter_or_exclude(**params)
+        return self
 
     def exclude(self, **params):
-        return self._mount_query('NOT ', **params)
+        """ Exclude a statement in the query """
+        self._filter_or_exclude(prepend_operator='NOT', **params)
+        return self
 
-    def _mount_query(self, logical_operator='', **params):
+    def _filter_or_exclude(self, logical_operator='AND', prepend_operator='', **params):
         """
-        Mount the query
-        ``logical_operator`` must end with a blank space, it avoids white spaces
-        when the query doesn't need them
+        Add AND, OR filters to a query or exclude prepending the NOT operator
+        ``logical_operator`` The glue operator to the query. Default is ``AND``
+        ``prepend_operator`` The operator that prepends each statement, in case of ``exclude``, it's NOT by default.
         ``params`` field=value params
         """
-        query = []
+        _query = []
+
         for key, value in params.items():
-            query.append('%s%s: "%s" AND' % (logical_operator, key, value))
+            _query.append('%s: "%s"' % (key, value))
 
-        query = " ".join(query)[:-4]
+        if prepend_operator:
+            _query = ["%s %s" % (prepend_operator, query_statement) for query_statement in _query]
 
-        return query
+        _query = (" %s " % logical_operator).join(_query)
+        if self.raw_query:
+            self.raw_query = "%s AND %s" % (self.raw_query, _query)
+        else:
+            self.raw_query = _query
+
+        return self.raw_query
