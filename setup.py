@@ -7,5 +7,4 @@ setup(
     author='Flavia Missi',
     author_email='flaviamissi@gmail.com',
     install_requires=['solrpy'],
-    test_requires=['nose']
 )
