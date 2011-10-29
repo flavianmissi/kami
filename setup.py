@@ -6,5 +6,6 @@ setup(
     description='query solr made easy',
     author='Flavia Missi',
     author_email='flaviamissi@gmail.com',
-    install_requires=['solrpy']
+    install_requires=['solrpy'],
+    test_requires=['nose']
 )
