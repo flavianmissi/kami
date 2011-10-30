@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from search import Kami
+from kami import Kami
 
 #TODO test format equality by regex
 
