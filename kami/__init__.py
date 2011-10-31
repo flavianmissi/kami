@@ -35,3 +35,19 @@ class Kami(object):
             self.raw_query = query
 
         return self.raw_query
+
+
+class Q(object):
+
+    def __init__(self, **params):
+        self.params = params
+
+    def __and__(self, other):
+        return '%s AND %s' % (self.to_query(), other.to_query())
+
+    def to_query(self):
+        query = []
+        for key, value in self.params.items():
+            query.append('%s: "%s"' % (key, value))
+        query = ' AND '.join(query)
+        return query
