@@ -11,15 +11,15 @@ class SimpleSearchQueryTestCase(TestCase):
         self.kami = Kami()
 
     def test_should_pass_title(self):
-        query = self.kami.search(title='Mein Teil').raw_query
+        query = self.kami.filter(title='Mein Teil').raw_query
         self.assertEqual('title: "Mein Teil"', query)
 
     def test_should_pass_artist_and_title(self):
-        query = self.kami.search(title='Mein Teil', artist='Rammstein').raw_query
+        query = self.kami.filter(title='Mein Teil', artist='Rammstein').raw_query
         self.assertEqual('title: "Mein Teil" AND artist: "Rammstein"', query)
 
     def test_should_have_one_AND_only_between_a_pair_of_statements(self):
-        query = self.kami.search(title='Mein Teil', artist='Rammstein', album='Reise, Reise').raw_query
+        query = self.kami.filter(title='Mein Teil', artist='Rammstein', album='Reise, Reise').raw_query
         self.assertEqual('album: "Reise, Reise" AND title: "Mein Teil" AND artist: "Rammstein"', query)
 
 
@@ -43,9 +43,9 @@ class ExcludeAndSimpleSearchMustWorkTogetherTestCase(TestCase):
         self.kami = Kami()
 
     def test_should_search_for_field_title_and_negate_the_album(self):
-        query = self.kami.search(title='Mein').exclude(album='Mutter').raw_query
+        query = self.kami.filter(title='Mein').exclude(album='Mutter').raw_query
         self.assertEqual('title: "Mein" AND NOT album: "Mutter"', query)
 
     def test_glue_between_search_and_exclude_methods_should_be_AND_by_default(self):
-        query = self.kami.search(title='Mein').exclude(album='Mutter').raw_query
+        query = self.kami.filter(title='Mein').exclude(album='Mutter').raw_query
         self.assertNotIn('OR', query)

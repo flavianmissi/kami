@@ -3,7 +3,7 @@ class Kami(object):
     def __init__(self):
         self.raw_query = ''
 
-    def search(self, **params):
+    def filter(self, **params):
         """ Simple key value search query """
         self._filter_or_exclude(**params)
         return self
