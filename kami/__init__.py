@@ -5,36 +5,19 @@ class Kami(object):
 
     def filter(self, **params):
         """ Simple key value search query """
-        self._filter_or_exclude(**params)
+        self._combine(Q(**params).to_query())
         return self
 
     def exclude(self, **params):
         """ Exclude a statement in the query """
-        self._filter_or_exclude(prepend_operator='NOT', **params)
+        self._combine(~Q(**params))
         return self
 
-    def _filter_or_exclude(self, logical_operator='AND', prepend_operator='', **params):
-        """
-        Add AND, OR filters to a query or exclude prepending the NOT operator
-        ``logical_operator`` The glue operator to the query. Default is ``AND``
-        ``prepend_operator`` The operator that prepends each statement, in case of ``exclude``, it's NOT by default.
-        ``params`` field=value params
-        """
-        query = []
-
-        for key, value in params.items():
-            query.append('%s: "%s"' % (key, value))
-
-        if prepend_operator:
-            query = ["%s %s" % (prepend_operator, query_statement) for query_statement in query]
-
-        query = (" %s " % logical_operator).join(query)
+    def _combine(self, query):
         if self.raw_query:
             self.raw_query = "%s AND %s" % (self.raw_query, query)
         else:
             self.raw_query = query
-
-        return self.raw_query
 
 
 class Q(object):
@@ -45,9 +28,19 @@ class Q(object):
     def __and__(self, other):
         return '%s AND %s' % (self.to_query(), other.to_query())
 
-    def to_query(self):
+    def __or__(self, other):
+        return '%s OR %s' % (self.to_query(), other.to_query())
+
+    def __invert__(self):
+        return self.to_query(negate=True)
+
+    def to_query(self, negate=False):
         query = []
         for key, value in self.params.items():
             query.append('%s: "%s"' % (key, value))
+
+        if negate:
+            query = ["NOT %s" % q for q in query]
+
         query = ' AND '.join(query)
         return query
