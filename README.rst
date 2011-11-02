@@ -1,5 +1,5 @@
-Kami - solr queries made easy
-=============================
+Kami - solr queries made simple
+===============================
 
 Finding
 -------
