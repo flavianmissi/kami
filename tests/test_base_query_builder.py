@@ -18,3 +18,9 @@ class BaseQueryBuilderTestCase(TestCase):
 
     def test_should_negate_a_query_calling_tilde(self):
         self.assertEqual('NOT artist: "Rammstein"', ~Q(artist='Rammstein'))
+
+    def test_should_use_AND_with_negation(self):
+        self.assertEqual('title: "Mein Teil" AND NOT album: "Mutter"', Q(title='Mein Teil') & ~Q(album='Mutter'))
+
+    def test_should_use_OR_with_negation(self):
+        self.assertEqual('title: "Mein Teil" OR NOT album: "Mutter"', Q(title='Mein Teil') | ~Q(album='Mutter'))

@@ -26,10 +26,16 @@ class Q(object):
         self.params = params
 
     def __and__(self, other):
-        return '%s AND %s' % (self.to_query(), other.to_query())
+        if isinstance(other, Q):
+            other = other.to_query()
+
+        return '%s AND %s' % (self.to_query(), other)
 
     def __or__(self, other):
-        return '%s OR %s' % (self.to_query(), other.to_query())
+        if isinstance(other, Q):
+            other = other.to_query()
+
+        return '%s OR %s' % (self.to_query(), other)
 
     def __invert__(self):
         return self.to_query(negate=True)
