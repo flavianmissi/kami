@@ -3,26 +3,32 @@ class Kami(object):
     def __init__(self):
         self.raw_query = ''
 
-    def filter(self, **params):
+    def filter(self, q=None, **params):
         """ Simple key value search query """
-        self._combine(Q(**params).to_query())
-        return self
+        return self._filter_or_exclude(False, q, **params)
 
-    def exclude(self, **params):
+    def exclude(self, q=None, **params):
         """ Exclude a statement in the query """
-        self._combine((~Q(**params)).query)
+        return self._filter_or_exclude(True, q, **params)
+
+    def _filter_or_exclude(self, negate, q=None, **params):
+        if q and isinstance(q, Q):
+            self.raw_query = q.query
+        else:
+            if negate:
+                self._combine((~Q(**params)))
+            else:
+                self._combine(Q(**params))
+
         return self
 
-    def _combine(self, query):
+    def _combine(self, q):
         if self.raw_query:
-            self.raw_query = "%s AND %s" % (self.raw_query, query)
+            self.raw_query = "%s AND %s" % (self.raw_query, q.query)
         else:
-            self.raw_query = query
+            self.raw_query = q.query
 
 class Q(object):
-
-    OR = 'OR'
-    AND = 'AND'
 
     def __init__(self, **params):
         self.params = params
