@@ -10,7 +10,7 @@ class Kami(object):
 
     def exclude(self, **params):
         """ Exclude a statement in the query """
-        self._combine(~Q(**params))
+        self._combine((~Q(**params)).query)
         return self
 
     def _combine(self, query):
@@ -19,26 +19,26 @@ class Kami(object):
         else:
             self.raw_query = query
 
-
 class Q(object):
+
+    OR = 'OR'
+    AND = 'AND'
 
     def __init__(self, **params):
         self.params = params
+        self.to_query()
 
     def __and__(self, other):
-        if isinstance(other, Q):
-            other = other.to_query()
-
-        return '%s AND %s' % (self.to_query(), other)
+        self.query = '%s AND %s' % (self.query, other.query)
+        return self
 
     def __or__(self, other):
-        if isinstance(other, Q):
-            other = other.to_query()
-
-        return '%s OR %s' % (self.to_query(), other)
+        self.query = '%s OR %s' % (self.query, other.query)
+        return self
 
     def __invert__(self):
-        return self.to_query(negate=True)
+        self.query = self.to_query(negate=True)
+        return self
 
     def to_query(self, negate=False):
         query = []
@@ -48,5 +48,5 @@ class Q(object):
         if negate:
             query = ["NOT %s" % q for q in query]
 
-        query = ' AND '.join(query)
-        return query
+        self.query = ' AND '.join(query)
+        return self.query
