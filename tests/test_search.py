@@ -34,6 +34,10 @@ class FilterQueryTestCase(TestCase):
         query = self.kami.filter(~Q(title='Mein Teil') | Q(artist='Rammstein')).raw_query
         self.assertEqual('NOT title: "Mein Teil" OR artist: "Rammstein"', query)
 
+    def test_should_support_pass_a_tuple_to_a_field_and_group_the_field_in_the_query(self):
+        query = self.kami.filter(title=('Mein Teil', 'Amerika')).raw_query
+        self.assertEqual('title: ("Mein Teil" "Amerika")', query)
+
 
 class ExcludeSearchQueryTestCase(TestCase):
 
@@ -51,6 +55,10 @@ class ExcludeSearchQueryTestCase(TestCase):
     def test_should_raise_an_error_when_trying_to_call_exclude_with_Q_objects_as_params(self):
         with self.assertRaises(ValueError):
             self.kami.exclude(Q(title='Mein Teil') | Q(artist='Rammstein')).raw_query
+
+    def test_should_support_pass_a_tuple_to_a_field_and_group_the_field_in_the_query(self):
+        query = self.kami.exclude(title=('Mein Teil', 'Amerika')).raw_query
+        self.assertEqual('NOT title: ("Mein Teil" "Amerika")', query)
 
 class ExcludeAndFilterMustWorkTogetherTestCase(TestCase):
 

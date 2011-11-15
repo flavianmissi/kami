@@ -52,10 +52,18 @@ class Q(object):
     def to_query(self, negate=False):
         query = []
         for key, value in self.params.items():
-            query.append('%s: "%s"' % (key, value))
+            statement = self.to_statement(key, value)
+            query.append(statement)
 
         if negate:
             query = ["NOT %s" % q for q in query]
 
         self.query = ' AND '.join(query)
         return self.query
+
+    def to_statement(self, field, value):
+        if isinstance(value, tuple):
+            value = ['"%s"' % v for v in value]
+            return '%s: (%s)' % (field, ' '.join(value))
+        else:
+            return '%s: "%s"' % (field, value)
