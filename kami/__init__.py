@@ -7,9 +7,12 @@ class Kami(object):
         """ Simple key value search query """
         return self._filter_or_exclude(False, q, **params)
 
-    def exclude(self, q=None, **params):
+    def exclude(self, *args, **params):
         """ Exclude a statement in the query """
-        return self._filter_or_exclude(True, q, **params)
+        if args and isinstance(args[0], Q):
+            raise ValueError("exclude function should take only named arguments")
+
+        return self._filter_or_exclude(True, **params)
 
     def _filter_or_exclude(self, negate, q=None, **params):
         if q and isinstance(q, Q):

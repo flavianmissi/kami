@@ -5,7 +5,7 @@ from kami import Kami, Q
 #TODO test format equality by regex
 
 
-class SimpleSearchQueryTestCase(TestCase):
+class FilterQueryTestCase(TestCase):
 
     def setUp(self):
         self.kami = Kami()
@@ -35,7 +35,7 @@ class SimpleSearchQueryTestCase(TestCase):
         self.assertEqual('NOT title: "Mein Teil" OR artist: "Rammstein"', query)
 
 
-class SimpleExcludeSearchQueryTestCase(TestCase):
+class ExcludeSearchQueryTestCase(TestCase):
 
     def setUp(self):
         self.kami = Kami()
@@ -48,11 +48,11 @@ class SimpleExcludeSearchQueryTestCase(TestCase):
         query = self.kami.exclude(title='Amerika', album='Reise, Reise').raw_query
         self.assertEqual('NOT album: "Reise, Reise" AND NOT title: "Amerika"', query)
 
-    def test_should_support_calling_exclude_with_Q_objects_as_params(self):
-        query = self.kami.exclude(Q(title='Mein Teil') | Q(artist='Rammstein')).raw_query
-        self.assertEqual('NOT title: "Mein Teil" OR NOT artist: "Rammstein"', query)
+    def test_should_raise_an_error_when_trying_to_call_exclude_with_Q_objects_as_params(self):
+        with self.assertRaises(ValueError):
+            self.kami.exclude(Q(title='Mein Teil') | Q(artist='Rammstein')).raw_query
 
-class ExcludeAndSimpleSearchMustWorkTogetherTestCase(TestCase):
+class ExcludeAndFilterMustWorkTogetherTestCase(TestCase):
 
     def setUp(self):
         self.kami = Kami()
